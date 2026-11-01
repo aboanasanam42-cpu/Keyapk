@@ -44,40 +44,86 @@ jobs:
         run: |
           echo "Preparing environment secrets..."
           touch .env
-          echo "SMTP_EMAIL=${{ secrets.SMTP_EMAIL || vars.SMTP_EMAIL || 'aboanasanam42@gmail.com' }}" >> .env
-          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD || vars.SMTP_PASSWORD || '' }}" >> .env
-          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY || vars.GEMINI_API_KEY || '' }}" >> .env
+          echo "SMTP_EMAIL=\"${{ secrets.SMTP_EMAIL || vars.SMTP_EMAIL || 'aboanasanam42@gmail.com' }}\"" >> .env
+          echo "SMTP_PASSWORD=\"${{ secrets.SMTP_PASSWORD || vars.SMTP_PASSWORD || '' }}\"" >> .env
+          echo "GEMINI_API_KEY=\"${{ secrets.GEMINI_API_KEY || vars.GEMINI_API_KEY || '' }}\"" >> .env
           
-          # Also write to local.properties as fallback for any custom plugins
+          # Also write to local.properties as fallback
           touch local.properties
           echo "smtp.email=${{ secrets.SMTP_EMAIL || vars.SMTP_EMAIL || 'aboanasanam42@gmail.com' }}" >> local.properties
           echo "smtp.password=${{ secrets.SMTP_PASSWORD || vars.SMTP_PASSWORD || '' }}" >> local.properties
 
-      - name: Configure Keystore & Signing (with Auto-Fallback)
+      - name: Configure Keystore & Signing (with Auto Alias Resolution & Fallback)
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
+          STORE_PASS="${KEYSTORE_PASSWORD:-android}"
+          KEY_PASS="${KEY_PASSWORD:-$STORE_PASS}"
+          VALID_KEYSTORE=false
+
           if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "Using custom Keystore from GitHub Secrets..."
+            echo "Decoding custom keystore from GitHub Secrets..."
             echo "$KEYSTORE_BASE64" | tr -d '\r\n ' | base64 -d > my-upload-key.jks
-            echo "STORE_PASSWORD=${KEYSTORE_PASSWORD:-android}" >> $GITHUB_ENV
-            echo "KEY_ALIAS=${KEY_ALIAS:-upload}" >> $GITHUB_ENV
-            echo "KEY_PASSWORD=${KEY_PASSWORD:-android}" >> $GITHUB_ENV
-            echo "KEYSTORE_PATH=${GITHUB_WORKSPACE}/my-upload-key.jks" >> $GITHUB_ENV
-          else
-            echo "No custom keystore provided. Generating automatic fallback signing keystore..."
-            keytool -genkey -v -keystore my-upload-key.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass android -keypass android -dname "CN=SecretVault, OU=Dev, O=AIStudio, L=Global, S=Earth, C=US"
-            echo "STORE_PASSWORD=android" >> $GITHUB_ENV
-            echo "KEY_ALIAS=upload" >> $GITHUB_ENV
-            echo "KEY_PASSWORD=android" >> $GITHUB_ENV
-            echo "KEYSTORE_PATH=${GITHUB_WORKSPACE}/my-upload-key.jks" >> $GITHUB_ENV
+
+            # Test if keystore can be opened with storepass
+            if keytool -list -keystore my-upload-key.jks -storepass "$STORE_PASS" > /tmp/keystore_entries.txt 2>&1; then
+              echo "Keystore successfully verified."
+              cat /tmp/keystore_entries.txt
+
+              # 1. Check if 'upload' alias already exists
+              if grep -qi "upload," /tmp/keystore_entries.txt; then
+                echo "Alias 'upload' found in keystore."
+                VALID_KEYSTORE=true
+              else
+                # 2. Find the target alias to rename to 'upload'
+                DETECTED_ALIAS=""
+                if [ -n "$KEY_ALIAS" ] && grep -qi "${KEY_ALIAS}," /tmp/keystore_entries.txt; then
+                  DETECTED_ALIAS=$(grep -i "${KEY_ALIAS}," /tmp/keystore_entries.txt | cut -d',' -f1 | head -n 1 | xargs)
+                else
+                  DETECTED_ALIAS=$(grep -i "PrivateKeyEntry" /tmp/keystore_entries.txt | cut -d',' -f1 | head -n 1 | xargs)
+                fi
+
+                if [ -n "$DETECTED_ALIAS" ]; then
+                  echo "Found key alias '$DETECTED_ALIAS'. Renaming to 'upload' for Gradle signing..."
+                  if keytool -changealias -alias "$DETECTED_ALIAS" -destalias "upload" \
+                    -keystore my-upload-key.jks -storepass "$STORE_PASS" -keypass "$KEY_PASS" 2>&1; then
+                    echo "Successfully aligned alias to 'upload'."
+                    VALID_KEYSTORE=true
+                  else
+                    echo "Notice: Could not change alias with provided key password. Testing key password fallback..."
+                    # Try using storepass as keypass if different
+                    if keytool -changealias -alias "$DETECTED_ALIAS" -destalias "upload" \
+                      -keystore my-upload-key.jks -storepass "$STORE_PASS" -keypass "$STORE_PASS" 2>&1; then
+                      KEY_PASS="$STORE_PASS"
+                      VALID_KEYSTORE=true
+                    fi
+                  fi
+                fi
+              fi
+            else
+              echo "Warning: Could not open custom keystore with provided password:"
+              cat /tmp/keystore_entries.txt
+            fi
           fi
 
-          # Also verify debug.keystore exists
+          if [ "$VALID_KEYSTORE" = false ]; then
+            echo "Generating clean signing keystore with alias 'upload'..."
+            rm -f my-upload-key.jks
+            STORE_PASS="android"
+            KEY_PASS="android"
+            keytool -genkey -v -keystore my-upload-key.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$STORE_PASS" -keypass "$KEY_PASS" -dname "CN=SecretVault, OU=Dev, O=AIStudio, L=Global, S=Earth, C=US"
+          fi
+
+          echo "STORE_PASSWORD=$STORE_PASS" >> $GITHUB_ENV
+          echo "KEY_ALIAS=upload" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=$KEY_PASS" >> $GITHUB_ENV
+          echo "KEYSTORE_PATH=${GITHUB_WORKSPACE}/my-upload-key.jks" >> $GITHUB_ENV
+
+          # Ensure debug.keystore is present
           if [ ! -f "debug.keystore" ]; then
             if [ -f "debug.keystore.base64" ]; then
               base64 -d debug.keystore.base64 > debug.keystore
