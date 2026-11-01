@@ -1,0 +1,6 @@
+{
+  "name": "الخزنة السرية",
+  "description": "تطبيق الخزنة السرية الآمن لحفظ وتشفير الملفات والصور والمستندات مع دعم البصمة والتحقق عبر البريد",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

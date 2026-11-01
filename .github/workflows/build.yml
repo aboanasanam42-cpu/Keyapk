@@ -1,0 +1,106 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Sign APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Ensure Gradle Wrapper Executable
+        run: |
+          if [ ! -f "gradlew" ]; then
+            echo "gradlew not found, generating wrapper..."
+            gradle wrapper || gradle wrapper --gradle-version 8.11.1
+          fi
+          chmod +x gradlew
+
+      - name: Inject Secrets & Environment (.env & local.properties)
+        run: |
+          echo "Preparing environment secrets..."
+          touch .env
+          echo "SMTP_EMAIL=${{ secrets.SMTP_EMAIL || vars.SMTP_EMAIL || 'aboanasanam42@gmail.com' }}" >> .env
+          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD || vars.SMTP_PASSWORD || '' }}" >> .env
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY || vars.GEMINI_API_KEY || '' }}" >> .env
+          
+          # Also write to local.properties as fallback for any custom plugins
+          touch local.properties
+          echo "smtp.email=${{ secrets.SMTP_EMAIL || vars.SMTP_EMAIL || 'aboanasanam42@gmail.com' }}" >> local.properties
+          echo "smtp.password=${{ secrets.SMTP_PASSWORD || vars.SMTP_PASSWORD || '' }}" >> local.properties
+
+      - name: Configure Keystore & Signing (with Auto-Fallback)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Using custom Keystore from GitHub Secrets..."
+            echo "$KEYSTORE_BASE64" | tr -d '\r\n ' | base64 -d > my-upload-key.jks
+            echo "STORE_PASSWORD=${KEYSTORE_PASSWORD:-android}" >> $GITHUB_ENV
+            echo "KEY_ALIAS=${KEY_ALIAS:-upload}" >> $GITHUB_ENV
+            echo "KEY_PASSWORD=${KEY_PASSWORD:-android}" >> $GITHUB_ENV
+            echo "KEYSTORE_PATH=${GITHUB_WORKSPACE}/my-upload-key.jks" >> $GITHUB_ENV
+          else
+            echo "No custom keystore provided. Generating automatic fallback signing keystore..."
+            keytool -genkey -v -keystore my-upload-key.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass android -keypass android -dname "CN=SecretVault, OU=Dev, O=AIStudio, L=Global, S=Earth, C=US"
+            echo "STORE_PASSWORD=android" >> $GITHUB_ENV
+            echo "KEY_ALIAS=upload" >> $GITHUB_ENV
+            echo "KEY_PASSWORD=android" >> $GITHUB_ENV
+            echo "KEYSTORE_PATH=${GITHUB_WORKSPACE}/my-upload-key.jks" >> $GITHUB_ENV
+          fi
+
+          # Also verify debug.keystore exists
+          if [ ! -f "debug.keystore" ]; then
+            if [ -f "debug.keystore.base64" ]; then
+              base64 -d debug.keystore.base64 > debug.keystore
+            else
+              keytool -genkey -v -keystore debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+                -storepass android -keypass android -dname "CN=Android Debug, O=Android, C=US"
+            fi
+          fi
+
+      - name: Build APK (Release & Debug)
+        run: |
+          ./gradlew assembleRelease assembleDebug --stacktrace
+
+      - name: Find & Prepare Output APKs
+        id: apk_location
+        run: |
+          mkdir -p build_outputs
+          find app/build/outputs/apk/ -name "*.apk" -type f -exec cp {} build_outputs/ \;
+          ls -la build_outputs/
+
+      - name: Upload APK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: secret-vault-apks
+          path: build_outputs/*.apk
+          retention-days: 14

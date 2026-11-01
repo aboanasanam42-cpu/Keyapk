@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Golden Aura Glow behind the Wheat Ear -->
+    <path
+        android:pathData="M54,20 C68,20 78,35 78,54 C78,73 68,84 54,84 C40,84 30,73 30,54 C30,35 40,20 54,20 Z"
+        android:fillColor="#15F59E0B" />
+
+    <!-- Awns (Fine golden bristles extending from grains) -->
+    <!-- Top Awns -->
+    <path
+        android:pathData="M54,24 L54,14"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFDF73" />
+    <path
+        android:pathData="M52,26 L46,16"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFC837" />
+    <path
+        android:pathData="M56,26 L62,16"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFC837" />
+
+    <!-- Upper Side Awns -->
+    <path
+        android:pathData="M46,33 L36,22"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#E6B800" />
+    <path
+        android:pathData="M62,33 L72,22"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#E6B800" />
+
+    <!-- Mid Side Awns -->
+    <path
+        android:pathData="M44,42 L33,32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#E6B800" />
+    <path
+        android:pathData="M64,42 L75,32"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#E6B800" />
+
+    <!-- Lower Mid Side Awns -->
+    <path
+        android:pathData="M44,51 L33,42"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round"
+        android:strokeColor="#D99B00" />
+    <path
+        android:pathData="M64,51 L75,42"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round"
+        android:strokeColor="#D99B00" />
+
+    <!-- Lower Side Awns -->
+    <path
+        android:pathData="M46,60 L37,52"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round"
+        android:strokeColor="#C68A00" />
+    <path
+        android:pathData="M62,60 L71,52"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round"
+        android:strokeColor="#C68A00" />
+
+    <!-- Central Wheat Stem -->
+    <path
+        android:pathData="M54,23 L54,88"
+        android:strokeWidth="2.8"
+        android:strokeLineCap="round"
+        android:strokeColor="#B8860B" />
+    <path
+        android:pathData="M54,23 L54,86"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#FFE082" />
+
+    <!-- Top Kernel -->
+    <path
+        android:pathData="M54,23 C51,26 51,30 54,33 C57,30 57,26 54,23 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#D4AF37">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="51"
+                android:startY="23"
+                android:endX="57"
+                android:endY="33"
+                android:type="linear">
+                <item android:color="#FFF3B0" android:offset="0.0" />
+                <item android:color="#FFD700" android:offset="0.6" />
+                <item android:color="#D97706" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Row 1 Kernels (Left & Right) -->
+    <path
+        android:pathData="M53,28 C48,27 44,31 46,36 C49,38 53,35 53,28 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="44"
+                android:startY="27"
+                android:endX="53"
+                android:endY="38"
+                android:type="linear">
+                <item android:color="#FFE885" android:offset="0.0" />
+                <item android:color="#F59E0B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M55,28 C60,27 64,31 62,36 C59,38 55,35 55,28 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="55"
+                android:startY="27"
+                android:endX="64"
+                android:endY="38"
+                android:type="linear">
+                <item android:color="#FFF0A0" android:offset="0.0" />
+                <item android:color="#D97706" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Row 2 Kernels -->
+    <path
+        android:pathData="M53,36 C47,35 42,40 44,45 C48,47 53,44 53,36 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="42"
+                android:startY="35"
+                android:endX="53"
+                android:endY="47"
+                android:type="linear">
+                <item android:color="#FFE885" android:offset="0.0" />
+                <item android:color="#F59E0B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M55,36 C61,35 66,40 64,45 C60,47 55,44 55,36 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="55"
+                android:startY="35"
+                android:endX="66"
+                android:endY="47"
+                android:type="linear">
+                <item android:color="#FFF0A0" android:offset="0.0" />
+                <item android:color="#D97706" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Row 3 Kernels (Center, plumpest) -->
+    <path
+        android:pathData="M53,45 C46,44 41,50 44,55 C48,57 53,53 53,45 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="41"
+                android:startY="44"
+                android:endX="53"
+                android:endY="57"
+                android:type="linear">
+                <item android:color="#FFE680" android:offset="0.0" />
+                <item android:color="#F59E0B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M55,45 C62,44 67,50 64,55 C60,57 55,53 55,45 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="55"
+                android:startY="44"
+                android:endX="67"
+                android:endY="57"
+                android:type="linear">
+                <item android:color="#FFF0A0" android:offset="0.0" />
+                <item android:color="#D97706" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Row 4 Kernels -->
+    <path
+        android:pathData="M53,54 C47,53 43,58 45,63 C49,65 53,61 53,54 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="43"
+                android:startY="53"
+                android:endX="53"
+                android:endY="65"
+                android:type="linear">
+                <item android:color="#FFE47A" android:offset="0.0" />
+                <item android:color="#F59E0B" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M55,54 C61,53 65,58 63,63 C59,65 55,61 55,54 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#B8860B">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="55"
+                android:startY="53"
+                android:endX="65"
+                android:endY="65"
+                android:type="linear">
+                <item android:color="#FFEC94" android:offset="0.0" />
+                <item android:color="#D97706" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Row 5 Kernels (Base) -->
+    <path
+        android:pathData="M53,63 C48,62 45,66 47,71 C50,72 53,69 53,63 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#996515">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="45"
+                android:startY="62"
+                android:endX="53"
+                android:endY="72"
+                android:type="linear">
+                <item android:color="#FFDF73" android:offset="0.0" />
+                <item android:color="#D97706" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M55,63 C60,62 63,66 61,71 C58,72 55,69 55,63 Z"
+        android:strokeWidth="0.8"
+        android:strokeColor="#996515">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="55"
+                android:startY="62"
+                android:endX="63"
+                android:endY="72"
+                android:type="linear">
+                <item android:color="#FFE885" android:offset="0.0" />
+                <item android:color="#B45309" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Vault Padlock Shackle Emblem at base of wheat (subtle security symbology) -->
+    <path
+        android:pathData="M50,74 C50,71.8 51.8,70 54,70 C56.2,70 58,71.8 58,74 L58,76 L50,76 Z"
+        android:strokeWidth="1.2"
+        android:strokeColor="#FFE082"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M49,76 L59,76 L59,82 L49,82 Z"
+        android:fillColor="#FFD700" />
+    <path
+        android:pathData="M54,78 L54,80"
+        android:strokeWidth="1"
+        android:strokeColor="#1E293B" />
+</vector>

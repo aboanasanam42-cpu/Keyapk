@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">الخزنة السرية</string>
+    <string name="login_title">تسجيل الدخول إلى الخزنة</string>
+    <string name="login_subtitle">أدخل بيانات الاعتماد للوصول إلى ملفاتك المشفرة</string>
+    <string name="email_hint">البريد الإلكتروني</string>
+    <string name="password_hint">كلمة المرور</string>
+    <string name="login_button">فتح الخزنة</string>
+    <string name="biometric_button">الدخول بالبصمة</string>
+    <string name="biometric_switch">تفعيل الدخول ببصمة الإصبع</string>
+    <string name="forgot_password">نسيت كلمة المرور / تغيير الرمز</string>
+    <string name="vault_title">الخزنة السرية</string>
+    <string name="category_all">الكل</string>
+    <string name="category_images">الصور</string>
+    <string name="category_videos">الفيديو</string>
+    <string name="category_audio">الصوتيات</string>
+    <string name="category_documents">المستندات والعروض</string>
+    <string name="add_file">إضافة ملف</string>
+    <string name="no_files">لا توجد ملفات في الخزنة حالياً</string>
+</resources>
